@@ -99,4 +99,4 @@ npm run build
 ```
 
 
-Developed by Sathish Sundharamoorthy.
+❤️ Developed by Sathish Sundharamoorthy.
