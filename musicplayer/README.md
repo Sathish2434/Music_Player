@@ -98,6 +98,5 @@ Build the application for production:
 npm run build
 ```
 
-## 🙏 Acknowledgments
 
 Developed by Sathish Sundharamoorthy.
