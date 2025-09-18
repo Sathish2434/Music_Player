@@ -62,8 +62,10 @@ npm run build
 
 ---
 
-## 📸 Screenshots
-(Add screenshots here of your music player interface, 404 page, etc.)
+## 📸 Screenshots  
+
+### 🎵 Circular Music Player Interface  
+![Circular Music Player](./assets/sample-output.png)
 
 ---
 
