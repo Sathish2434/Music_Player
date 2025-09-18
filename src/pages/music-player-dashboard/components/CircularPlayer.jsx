@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import Icon from '../../../components/AppIcon';
 import Image from '../../../components/AppImage';
 
+
 const CircularPlayer = ({ 
   currentTrack, 
   isPlaying, 

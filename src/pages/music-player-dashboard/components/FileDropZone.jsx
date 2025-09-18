@@ -8,6 +8,7 @@ const FileDropZone = ({ onFileLoad, isActive }) => {
     e?.preventDefault();
     setIsDragOver(true);
   }, []);
+  
 
   const handleDragLeave = useCallback((e) => {
     e?.preventDefault();

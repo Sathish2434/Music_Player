@@ -11,7 +11,7 @@ const Input = React.forwardRef(({
     id,
     ...props
 }, ref) => {
-    // Generate unique ID if not provided
+    // Generate unique ID if not provided for accessibility
     const inputId = id || `input-${Math.random()?.toString(36)?.substr(2, 9)}`;
 
     // Base input classes

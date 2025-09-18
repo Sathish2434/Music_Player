@@ -14,6 +14,7 @@ const VisualEffects = ({ isPlaying, currentTime, audioData }) => {
 
     const particles = [];
     const particleCount = 50;
+    
 
     // Initialize particles
     for (let i = 0; i < particleCount; i++) {

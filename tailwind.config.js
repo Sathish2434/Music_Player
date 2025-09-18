@@ -44,10 +44,12 @@ export default {
           foreground: "var(--color-accent-foreground)", // custom-dark
         },
         popover: {
+          
           DEFAULT: "var(--color-popover)", // custom-elevated-surface
           foreground: "var(--color-popover-foreground)", // slate-50
         },
         card: {
+
           DEFAULT: "var(--color-card)", // custom-elevated-surface
           foreground: "var(--color-card-foreground)", // slate-50
         },

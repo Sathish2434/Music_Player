@@ -1,6 +1,6 @@
 import React from 'react';
 import * as LucideIcons from 'lucide-react';
-import { HelpCircle } from 'lucide-react';
+import { HelpCircle } from 'lucide-react'; // Import a default icon for fallback
 
 function Icon({
     name,

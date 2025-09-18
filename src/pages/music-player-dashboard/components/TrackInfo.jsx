@@ -10,6 +10,7 @@ const TrackInfo = ({
   const handleProgressClick = (e) => {
     if (!duration) return;
     
+    
     const rect = e?.currentTarget?.getBoundingClientRect();
     const clickX = e?.clientX - rect?.left;
     const progress = clickX / rect?.width;

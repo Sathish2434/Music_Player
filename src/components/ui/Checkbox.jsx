@@ -15,7 +15,7 @@ const Checkbox = React.forwardRef(({
     size = "default",
     ...props
 }, ref) => {
-    // Generate unique ID if not provided
+    // Generate unique ID if not provided for accessibility
     const checkboxId = id || `checkbox-${Math.random()?.toString(36)?.substr(2, 9)}`;
 
     // Size variants

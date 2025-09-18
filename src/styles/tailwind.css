@@ -4,6 +4,7 @@
 @tailwind components;
 @tailwind utilities;
 
+
 @layer base {
   :root {
     /* Core Colors */
@@ -13,8 +14,8 @@
     --color-secondary-foreground: #F8FAFC; /* slate-50 */
     --color-accent: #F59E0B; /* amber-500 */
     --color-accent-foreground: #0F0F23; /* custom-dark */
-    
-    /* Background & Surface */
+
+   
     --color-background: #0F0F23; /* custom-dark-navy */
     --color-foreground: #F8FAFC; /* slate-50 */
     --color-surface: #1E1E3F; /* custom-elevated-surface */

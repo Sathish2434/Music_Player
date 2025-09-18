@@ -6,6 +6,7 @@ function Image({
   className = "",
   ...props
 }) {
+  
 
   return (
     <img
