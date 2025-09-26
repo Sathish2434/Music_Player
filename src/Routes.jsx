@@ -7,7 +7,7 @@ import MusicPlayerDashboard from './pages/music-player-dashboard';
 
 const Routes = () => {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
     
       <ErrorBoundary>
       <ScrollToTop />
