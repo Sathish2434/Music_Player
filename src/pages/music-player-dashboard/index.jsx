@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import CircularPlayer from './components/CircularPlayer';
 import TrackInfo from './components/TrackInfo';
 import ControlPanel from './components/ControlPanel';
@@ -23,54 +23,95 @@ const MusicPlayerDashboard = () => {
   const audioRef = useRef(null);
   const previousVolumeRef = useRef(75);
 
-  // Mock playlist data
-  const mockPlaylist = [
-    {
-      id: 1,
-      title: "Midnight Dreams",
-      artist: "Luna Eclipse",
-      album: "Cosmic Journey",
-      genre: "Electronic",
-      year: "2024",
-      format: "MP3",
-      duration: 245,
-      artwork: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop"
-    },
-    {
-      id: 2,
-      title: "Ocean Waves",
-      artist: "Serene Sounds",
-      album: "Nature\'s Symphony",
-      genre: "Ambient",
-      year: "2023",
-      format: "WAV",
-      duration: 312,
-      artwork: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400&h=400&fit=crop"
-    },
-    
-    {
-      id: 3,
-      title: "Urban Pulse",
-      artist: "City Lights",
-      album: "Metropolitan",
-      genre: "Hip Hop",
-      year: "2024",
-      format: "MP3",
-      duration: 198,
-      artwork: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop"
+  // Load local audio files from src/musics/
+  const localAudioFiles = useMemo(() => {
+    try {
+      return import.meta.glob('../../musics/*.{mp3,wav,ogg,m4a}', { eager: true, query: '?url', import: 'default' });
+    } catch (e) {
+      return {};
     }
-  ];
+  }, []);
 
-  const [playlist] = useState(mockPlaylist);
+  const [playlist, setPlaylist] = useState([]);
+
+  // Initialize playlist from local files
+  useEffect(() => {
+    const entries = Object.entries(localAudioFiles || {});
+    const localTracks = entries.map(([path, url], idx) => {
+      const fileName = path.split('/').pop() || `Track_${idx + 1}`;
+      const title = fileName.replace(/\.[^/.]+$/, '');
+      const extMatch = fileName.match(/\.([^.]+)$/);
+      const format = extMatch ? extMatch[1].toUpperCase() : 'MP3';
+      return {
+        id: Date.now() + idx,
+        title,
+        artist: 'Local File',
+        album: 'My Library',
+        genre: 'Unknown',
+        year: new Date()?.getFullYear()?.toString(),
+        format,
+        duration: 0,
+        artwork: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop",
+        url
+      };
+    });
+    if (localTracks.length) {
+      setPlaylist(prev => (prev.length ? prev : localTracks));
+    }
+  }, [localAudioFiles]);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
 
-  // Initialize first track
+  // Initialize first track when playlist available
   useEffect(() => {
     if (playlist?.length > 0 && !currentTrack) {
       setCurrentTrack(playlist?.[0]);
-      setDuration(playlist?.[0]?.duration);
     }
   }, [playlist, currentTrack]);
+
+  // Update audio source when current track changes
+  useEffect(() => {
+    if (audioRef?.current && currentTrack?.url) {
+      audioRef.current.src = currentTrack.url;
+      audioRef.current.load();
+    }
+  }, [currentTrack]);
+
+  // Fetch additional tracks from iTunes (Tamil and English previews)
+  useEffect(() => {
+    const fetchITunes = async (term, country = 'IN', limit = 15) => {
+      const params = new URLSearchParams({ term, media: 'music', entity: 'song', country, limit: String(limit) });
+      const res = await fetch(`https://itunes.apple.com/search?${params.toString()}`);
+      const data = await res.json();
+      return (data?.results || []).map((r, idx) => ({
+        id: Date.now() + Math.floor(Math.random() * 1e6) + idx,
+        title: r?.trackName || 'Unknown',
+        artist: r?.artistName || 'Unknown',
+        album: r?.collectionName || 'Unknown',
+        genre: r?.primaryGenreName || 'Unknown',
+        year: r?.releaseDate ? String(r.releaseDate).slice(0, 4) : undefined,
+        format: 'MP3',
+        duration: 0,
+        artwork: r?.artworkUrl100 ? r.artworkUrl100.replace('100x100bb', '400x400bb') : "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop",
+        url: r?.previewUrl
+      })).filter(t => !!t.url);
+    };
+
+    let aborted = false;
+    (async () => {
+      try {
+        const [tamil, english] = await Promise.all([
+          fetchITunes('tamil songs', 'IN', 15),
+          fetchITunes('english songs', 'US', 15)
+        ]);
+        if (!aborted) {
+          setPlaylist(prev => [...prev, ...tamil, ...english]);
+        }
+      } catch (e) {
+        // ignore network errors for now
+      }
+    })();
+    return () => { aborted = true; };
+  }, []);
 
   // Audio event handlers
   useEffect(() => {
@@ -202,7 +243,6 @@ const MusicPlayerDashboard = () => {
     
     setCurrentTrackIndex(nextIndex);
     setCurrentTrack(playlist?.[nextIndex]);
-    setDuration(playlist?.[nextIndex]?.duration);
     setCurrentTime(0);
     
     if (isPlaying) {
@@ -223,7 +263,6 @@ const MusicPlayerDashboard = () => {
     
     setCurrentTrackIndex(prevIndex);
     setCurrentTrack(playlist?.[prevIndex]);
-    setDuration(playlist?.[prevIndex]?.duration);
     setCurrentTime(0);
     
     if (isPlaying) {
