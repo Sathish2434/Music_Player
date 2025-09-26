@@ -4,7 +4,11 @@ import tsconfigPaths from "vite-tsconfig-paths";
 import tagger from "@dhiwise/component-tagger";
 
 // https://vitejs.dev/config/
+const isVercel = process.env.VERCEL === '1' || process.env.VERCEL_ENV;
+const base = isVercel ? '/' : '/Music_Player/';
+
 export default defineConfig({
+  base,
 
   
   build: {
